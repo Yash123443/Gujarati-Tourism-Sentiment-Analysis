@@ -1,0 +1,11 @@
+{
+  "model_name": "xlm-roberta-base",
+  "labels": [
+    "Positive",
+    "Neutral",
+    "Negative"
+  ],
+  "max_length": 128,
+  "n_reviews": 1498,
+  "epochs": 8
+}

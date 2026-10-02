@@ -1,0 +1,16 @@
+# ---- core (needed for everything; works on any PC) ----
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+joblib
+vaderSentiment
+jupyter
+
+# ---- optional: only for XLM-R zero-shot and fine-tuning ----
+# 1) install PyTorch for YOUR machine first from https://pytorch.org (choose CUDA build for the gaming laptop)
+# 2) then:
+transformers
+accelerate
+sentencepiece

@@ -1,0 +1,6 @@
+Model,Accuracy,Macro-F1,Kappa vs gold,CV acc (mean +/- std),Acc English,Acc Gujarati,Acc Mixed
+VADER (lexicon),0.5601,0.5509,0.3407,n/a (not trained),0.7254,0.34,0.6889
+TF-IDF + LogReg,0.8865,0.8864,0.8298,0.886 +/- 0.008,0.8594,0.8983,0.8978
+TF-IDF + LinearSVM,0.8858,0.8858,0.8288,0.886 +/- 0.014,0.8571,0.8967,0.9
+XLM-R (zero-shot),0.8818,0.8826,0.8228,n/a (not trained),0.9308,0.8417,0.8867
+Fine-tuned xlm-roberta-base,0.9606,0.9606,0.9409,0.961 +/- 0.009,0.9531,0.9617,0.9667
