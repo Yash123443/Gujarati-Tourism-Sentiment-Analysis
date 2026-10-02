@@ -138,7 +138,6 @@ async def health():
     return {
         "status": "ok" if model_loaded else "loading",
         "model_loaded": model_loaded,
-        "model_dir": str(MODEL_DIR),
     }
 
 

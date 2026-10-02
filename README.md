@@ -1,193 +1,153 @@
-# Gujarati Tourism Sentiment Analysis — Local Web Demo
+# Gujarati Tourism Sentiment Analysis
 
-A production-quality, full-stack AI web application for analyzing sentiment in Gujarati, English, and mixed-language tourism reviews using a **fine-tuned XLM-RoBERTa** model.
+A full-stack web demo that classifies Gujarat tourism reviews as **Positive**, **Neutral**, or **Negative**. It supports Gujarati, English, and code-mixed text using a fine-tuned XLM-RoBERTa model.
 
-## 📁 Project Structure
+## Highlights
 
+- Fine-tuned `xlm-roberta-base` deployed through FastAPI
+- React + Vite interface with a project overview and live analyzer
+- Predictions include a sentiment label, confidence, and probabilities for every class
+- 5-fold cross-validation accuracy: **96.06%**
+- Training dataset: **1,498** Gujarat tourism reviews
+
+## Architecture
+
+```text
+React + Vite frontend (port 5173)
+          │
+          ▼
+FastAPI prediction API (port 8000)
+          │
+          ▼
+Fine-tuned XLM-R model in results/xlm_roberta_finetuned/
 ```
-NPL main/
+
+## Repository layout
+
+```text
+.
 ├── app/
 │   ├── backend/
-│   │   ├── main.py            ← FastAPI backend
-│   │   └── requirements.txt   ← Backend Python deps
+│   │   ├── main.py
+│   │   └── requirements.txt
 │   └── frontend/
 │       ├── src/
-│       │   ├── pages/
-│       │   │   ├── OverviewPage.jsx   ← Landing/project overview
-│       │   │   └── AnalyzerPage.jsx   ← Live sentiment analyzer
-│       │   ├── components/
-│       │   │   └── Navbar.jsx
-│       │   ├── App.jsx
-│       │   ├── main.jsx
-│       │   └── index.css
-│       ├── index.html
 │       ├── package.json
 │       └── vite.config.js
 ├── results/
-│   └── xlm_roberta_finetuned/   ← Model files (untouched, ~1.1 GB)
-│       ├── model.safetensors
-│       ├── config.json
-│       ├── tokenizer.json
-│       └── tokenizer_config.json
+│   └── xlm_roberta_finetuned/   # deployed model and tokenizer
+├── tourism_reviews_dataset_expanded.csv
 └── Gujarati_Tourism_Sentiment_Analysis.ipynb
 ```
 
----
+## Requirements
 
-## ⚡ Quick Start (Windows)
+- Python 3.10 or later
+- Node.js 18 or later
+- Git LFS (required because the model weights are large)
 
-### Prerequisites
+## Clone the project
 
-| Tool | Minimum Version | Check |
-|------|----------------|-------|
-| Python | 3.10+ | `python --version` |
-| Node.js | 18+ | `node --version` |
-| npm | 9+ | `npm --version` |
+```bash
+git lfs install
+git clone https://github.com/Yash123443/Gujarati-Tourism-Sentiment-Analysis.git
+cd Gujarati-Tourism-Sentiment-Analysis
+git lfs pull
+```
 
-> **Important:** PyTorch must already be installed in your Python environment.
-> If not, install it first from https://pytorch.org (CPU version is fine for inference).
+After cloning, confirm that `results/xlm_roberta_finetuned/model.safetensors` exists. If it does not, Git LFS was not downloaded correctly.
 
----
+## Run locally
 
-### Step 1 — Set up Python environment
+### 1. Start the backend
 
-Open **PowerShell** or **Command Prompt** inside the `NPL main` folder:
+Create and activate a Python virtual environment, then install backend dependencies.
+
+**Windows PowerShell**
 
 ```powershell
-# Activate your existing venv (or create one)
-.\venv\Scripts\activate
-
-# Install backend dependencies
-pip install -r app\backend\requirements.txt
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r app\backend\requirements.txt
+python -m uvicorn app.backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
----
+**macOS / Linux**
 
-### Step 2 — Start the Backend
-
-With your venv still active, from inside `NPL main`:
-
-```powershell
-uvicorn app.backend.main:app --host 0.0.0.0 --port 8000 --reload
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r app/backend/requirements.txt
+python -m uvicorn app.backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Wait for the log message:
-```
-INFO: Model ready. Labels: {0: 'Positive', 1: 'Neutral', 2: 'Negative'}
-INFO: Application startup complete.
-```
+The first startup loads the 1.1 GB model and may take a minute on CPU. Keep this terminal open.
 
-> **Note:** The model is 1.1 GB — the first load takes 20–60 seconds on CPU. Subsequent requests are fast.
+### 2. Start the frontend
 
-Test the backend is live:
-```powershell
-curl http://localhost:8000/api/health
-```
-Expected response: `{"status":"ok","model_loaded":true,...}`
+Open a second terminal in the project folder:
 
----
-
-### Step 3 — Start the Frontend
-
-Open a **second** PowerShell / Command Prompt window, navigate to the frontend folder:
-
-```powershell
-cd "C:\Users\Yash\OneDrive\Desktop\NPL main\app\frontend"
+```bash
+cd app/frontend
+npm install
 npm run dev
 ```
 
-The frontend will start at **http://localhost:5173**
+Open the URL shown by Vite, normally [http://localhost:5173](http://localhost:5173).
 
----
-
-### Step 4 — Open in Browser
-
-Navigate to **http://localhost:5173**
-
-- **Page 1 — Overview**: Project landing page with model comparison table, pipeline, dataset info
-- **Page 2 — Live Analyzer**: Enter any Gujarati/English/mixed review and get real-time sentiment prediction
-
----
-
-## 🔌 API Reference
+## API
 
 ### `GET /api/health`
-Returns model load status.
+
+Returns the API and model-load status.
 
 ```json
 {
   "status": "ok",
-  "model_loaded": true,
-  "model_dir": "C:\\...\\results\\xlm_roberta_finetuned"
+  "model_loaded": true
 }
 ```
 
 ### `POST /api/predict`
-Request body:
+
+Request:
+
 ```json
-{ "text": "Statue of Unity khub sunder che!" }
+{
+  "text": "ગીર જંગલ સફારી ખૂબ સરસ હતી, amazing experience!"
+}
 ```
 
 Response:
+
 ```json
 {
   "label": "Positive",
-  "confidence": 98.72,
+  "confidence": 99.89,
   "scores": [
-    { "label": "Positive", "score": 0.987234 },
-    { "label": "Neutral",  "score": 0.008901 },
-    { "label": "Negative", "score": 0.003865 }
+    { "label": "Positive", "score": 0.998901 },
+    { "label": "Neutral", "score": 0.000652 },
+    { "label": "Negative", "score": 0.000447 }
   ]
 }
 ```
 
----
-
-## 🤖 Model Details
-
-| Property | Value |
-|----------|-------|
-| Base model | `xlm-roberta-base` |
-| Architecture | `XLMRobertaForSequenceClassification` |
-| Parameters | ~270M |
-| Labels | Positive (0), Neutral (1), Negative (2) |
-| Overall Accuracy | **96.06%** (5-fold cross-validation) |
-| Training data | 1,498 Gujarati tourism reviews |
-| Languages | Gujarati · English · Code-mixed |
-
----
-
-## 📊 Model Comparison
+## Model results
 
 | Model | Accuracy | Macro F1 |
-|-------|----------|----------|
-| VADER (lexicon) | 56.01% | 55.09% |
+|---|---:|---:|
+| VADER | 56.01% | 55.09% |
 | TF-IDF + Logistic Regression | 88.65% | 88.64% |
 | TF-IDF + Linear SVM | 88.58% | 88.58% |
-| XLM-R (zero-shot) | 88.18% | 88.26% |
+| XLM-R zero-shot | 88.18% | 88.26% |
 | **Fine-tuned XLM-RoBERTa** | **96.06%** | **96.06%** |
 
----
+The reported XLM-R score comes from 5-fold cross-validation. The deployed model was then trained on all 1,498 labeled reviews.
 
-## 🛠️ Troubleshooting
+## Notes
 
-| Problem | Solution |
-|---------|----------|
-| `uvicorn` not found | Run `pip install uvicorn` with venv active |
-| Model load fails | Verify `results/xlm_roberta_finetuned/model.safetensors` exists (1.04 GB) |
-| Frontend can't reach backend | Ensure backend is running on port 8000 before loading frontend |
-| Slow first prediction | Normal — CPU inference for a 270M parameter model takes 5–15 seconds |
-| `torch` not found | Install PyTorch from https://pytorch.org before running pip install |
-
----
-
-## 🚫 What This Demo Does NOT Do
-
-- It does **not** retrain the model
-- It does **not** move or duplicate the model files
-- It does **not** use the old joblib/TF-IDF model
-- All predictions are live from the FastAPI backend
-
----
-
-*Built with FastAPI · React · Vite · Transformers · XLM-RoBERTa*
+- The application performs local inference; it does not retrain the model.
+- The trained model is managed with Git LFS and is not duplicated by the backend.
+- As with any NLP model, nuanced or highly ambiguous reviews can occasionally be misclassified.
